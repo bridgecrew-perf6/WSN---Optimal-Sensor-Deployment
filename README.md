@@ -1,1 +1,1 @@
-# WSN---Optimal-Sensor-Deployment
+# WSN - Optimal Sensor Deployment
