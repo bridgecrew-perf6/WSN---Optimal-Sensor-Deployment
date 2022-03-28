@@ -1,16 +1,8 @@
 from cmath import tau
 import numpy as np
 import os
-# from dotenv import load_dotenv
 from collections import defaultdict
 from reliability import Reliability
-
-# load_dotenv()
-
-# r_c = os.load_dotenv('NODE_RANGE')
-# alpha = os.load_dotenv('ALPHA')
-# beta = os.load_dotenv('BETA')
-# _lambda = os.load_dotenv('LAMBDA')
 
 r_c = 50
 alpha = 1
@@ -20,8 +12,8 @@ _lambda = 0.02
 Target_under = defaultdict(lambda :[])
 
 def equal(T_cov, T):
-    for item in T_cov:
-        if item not in T:
+    for item in T:
+        if item not in T_cov:
             return False
     return True
 
@@ -39,14 +31,14 @@ def find_N_ifull(S_k, node_points):
     
     dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
 
-    N_ifull = []
+    N_ifull = set()
     
     for node1 in S_k:
         for node in node_points:
             if dist(node, node1) <= r_c:
-                N_ifull.append(node)
+                N_ifull.add(node)
 
-    return N_ifull
+    return list(N_ifull)
 
 
 def find_N_ieff(node_points, T_cov):
@@ -82,14 +74,17 @@ def next_best_node(d_o, tau, N_i):
 
     deno_sum = 0
     for node in N_i:
-        eta = 1 / dist(d_o, node)
-        deno_sum += np.power(tau[d_o][node], alpha) * np.power(eta, beta)
+        if d_o != node:
+            eta = 1 / dist(d_o, node)
+            deno_sum += np.power(tau[d_o][node], alpha) * np.power(eta, beta)
 
     for node in N_i:
-        eta = 1 / dist(d_o, node)
-        phermone_vals[node] = (np.power(tau[d_o][node], alpha) * np.power(eta, beta)) / deno_sum
+        if d_o != node:
+            eta = 1 / dist(d_o, node)
+            phermone_vals[node] = (np.power(tau[d_o][node], alpha) * np.power(eta, beta)) / deno_sum
 
-    ret = [0, 0]
+    ret = d_o
+    phermone_vals[d_o] = 0
 
     for node, p_val in phermone_vals.items():
         if p_val > phermone_vals[ret]:
@@ -139,15 +134,23 @@ def Tour_Construction(D, T, d_o, R_min, tau_mat):
         S.append(S_k)
         S_reliability += Reliability(S_k, T)
         for node in S_k:
-            D_minus.remove(node)
+            if node in D_minus:
+                D_minus.remove(node)
     
-    return S
+    Sret = []
+    for lst in S:
+        s = set()
+        for item in lst:
+            s.add(item)
+        Sret.append(list(s))
+
+    return Sret
 
 D = [(5, 5), (40, 25), (90, 50), (20, 45), (55, 60), (10, 80), (60, 85), (90, 90)]
 T = [(33, 33), (35, 75), (75, 60)]
 tau_mat = defaultdict(lambda : defaultdict(lambda : 0))
 for d in D:
-    for t in T:
+    for t in D:
         tau_mat[d][t] = 0.1
 
-print(Tour_Construction(D, T, (55, 60), 0.99, tau_mat))
+print(Tour_Construction(D, T, (90, 90), 0.99, tau_mat))
