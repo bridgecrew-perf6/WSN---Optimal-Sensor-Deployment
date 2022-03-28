@@ -1,4 +1,3 @@
-from cv2 import FILE_NODE_UNIFORM
 import numpy as np
 import os
 from dotenv import load_dotenv

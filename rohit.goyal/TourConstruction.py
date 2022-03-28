@@ -1,15 +1,22 @@
-from shutil import ReadError
+from cmath import tau
 import numpy as np
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from collections import defaultdict
+from reliability import Reliability
 
-load_dotenv()
+# load_dotenv()
 
-r_c = os.load_dotenv('NODE_RANGE')
-alpha = os.load_dotenv('ALPHA')
-beta = os.load_dotenv('BETA')
-_lambda = os.load_dotenv('LAMBDA')
+# r_c = os.load_dotenv('NODE_RANGE')
+# alpha = os.load_dotenv('ALPHA')
+# beta = os.load_dotenv('BETA')
+# _lambda = os.load_dotenv('LAMBDA')
+
+r_c = 50
+alpha = 1
+beta = 1
+_lambda = 0.02
+
 Target_under = defaultdict(lambda :[])
 
 def equal(T_cov, T):
@@ -18,13 +25,9 @@ def equal(T_cov, T):
             return False
     return True
 
-def Reliability(S):
-    pass
-
 def find_Target_under(D, T):
 
-    def dist(a, b):
-        return np.sqrt(np.power(a, 2)+np.power(b, 2))
+    dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
 
     for d in D:
         for t in T:
@@ -34,8 +37,7 @@ def find_Target_under(D, T):
 
 def find_N_ifull(S_k, node_points):
     
-    def dist(a, b):
-        return np.sqrt(np.power(a, 2) + np.power(b, 2))
+    dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
 
     N_ifull = []
     
@@ -76,8 +78,7 @@ def next_best_node(d_o, tau, N_i):
     
     phermone_vals = defaultdict(lambda :0)
     
-    def dist(a, b):
-        return np.sqrt(np.power(a, 2) + np.power(b, 2))
+    dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
 
     deno_sum = 0
     for node in N_i:
@@ -97,9 +98,8 @@ def next_best_node(d_o, tau, N_i):
     return ret
 
 
-def Tour_Construction(ant_num, D, T, d_o, R_min, tau_mat):
+def Tour_Construction(D, T, d_o, R_min, tau_mat):
     '''
-        ant_num: number of iterations we are on
         D: set of possible node positions (x, y)
         T: set of target points (x, y)
         d_o: starting point belongs to D
@@ -137,8 +137,17 @@ def Tour_Construction(ant_num, D, T, d_o, R_min, tau_mat):
         
         # Updating the variables after covering all arget points
         S.append(S_k)
-        S_reliability += Reliability(S_k)
+        S_reliability += Reliability(S_k, T)
         for node in S_k:
             D_minus.remove(node)
     
     return S
+
+D = [(5, 5), (40, 25), (90, 50), (20, 45), (55, 60), (10, 80), (60, 85), (90, 90)]
+T = [(33, 33), (35, 75), (75, 60)]
+tau_mat = defaultdict(lambda : defaultdict(lambda : 0))
+for d in D:
+    for t in T:
+        tau_mat[d][t] = 0.1
+
+print(Tour_Construction(D, T, (55, 60), 0.99, tau_mat))
