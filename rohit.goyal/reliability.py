@@ -14,10 +14,6 @@ def prob(X, Y):
 
 def f(Y, T):
 
-    # if len(Y) == 0:
-    #     return 0
-    # return 1
-
     dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
     cnt = 0
 

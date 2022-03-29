@@ -1,6 +1,5 @@
 from cmath import tau
 import numpy as np
-import os
 from collections import defaultdict
 from reliability import Reliability
 
@@ -146,11 +145,12 @@ def Tour_Construction(D, T, d_o, R_min, tau_mat):
 
     return Sret
 
-D = [(5, 5), (40, 25), (90, 50), (20, 45), (55, 60), (10, 80), (60, 85), (90, 90)]
-T = [(33, 33), (35, 75), (75, 60)]
+D = [(14, 52), (98, 1), (93, 3), (62, 84), (73, 3), (53, 22), (46, 71), (79, 56), (73, 19), (11, 79)]
+T = [(58, 43), (19, 97), (84, 37), (36, 32), (69, 22)]
+d_o =  (62, 84)
 tau_mat = defaultdict(lambda : defaultdict(lambda : 0))
 for d in D:
     for t in D:
         tau_mat[d][t] = 0.1
 
-print(Tour_Construction(D, T, (90, 90), 0.99, tau_mat))
+print(Tour_Construction(D, T, d_o, 0.99, tau_mat))
