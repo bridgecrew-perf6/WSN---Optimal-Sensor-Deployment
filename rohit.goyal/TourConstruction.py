@@ -10,13 +10,13 @@ _lambda = 0.02
 
 Target_under = defaultdict(lambda :[])
 
-def equal(T_cov, T):
+def equal(T_cov: list, T: list) -> bool:
     for item in T:
         if item not in T_cov:
             return False
     return True
 
-def find_Target_under(D, T):
+def find_Target_under(D: list, T: list) -> None:
 
     dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
 
@@ -26,7 +26,7 @@ def find_Target_under(D, T):
                 Target_under[d].append(t)
 
 
-def find_N_ifull(S_k, node_points):
+def find_N_ifull(S_k: list, node_points: list) -> list:
     
     dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
 
@@ -40,7 +40,7 @@ def find_N_ifull(S_k, node_points):
     return list(N_ifull)
 
 
-def find_N_ieff(node_points, T_cov):
+def find_N_ieff(node_points: list, T_cov: list) -> list:
     
     N_ieff = set()
     T_cov_tmp = T_cov.copy()
@@ -54,7 +54,7 @@ def find_N_ieff(node_points, T_cov):
     return list(N_ieff)
 
 
-def find_coverage_gain(N, T_cov):
+def find_coverage_gain(N: list, T_cov: list) -> int:
     
     ret = 0
     for node in N:
@@ -65,7 +65,7 @@ def find_coverage_gain(N, T_cov):
     return ret
 
 
-def next_best_node(d_o, tau, N_i):
+def next_best_node(d_o: tuple, tau: list, N_i: list) -> tuple:
     
     phermone_vals = defaultdict(lambda :0)
     
@@ -92,7 +92,7 @@ def next_best_node(d_o, tau, N_i):
     return ret
 
 
-def Tour_Construction(D, T, d_o, R_min, tau_mat):
+def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list) -> list:
     '''
         D: set of possible node positions (x, y)
         T: set of target points (x, y)

@@ -1,18 +1,13 @@
 import math
-import os
 import numpy as np
-# import dotenv
 
-# load_dotenv()
-
-# _lambda = os.load_dotenv('LAMBDA')
 _lambda = 0.02
 r_c = 50
 
-def prob(X, Y):
+def prob(X: list, Y: list) -> float:
     return math.pow(_lambda, len(X)) * math.pow(1 - _lambda, len(Y))
 
-def f(Y, T):
+def f(Y: list, T: list) -> int:
 
     dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
     cnt = 0
@@ -24,7 +19,7 @@ def f(Y, T):
 
     return 1 if cnt >= 0 else 0
 
-def Reliability(S, T):
+def Reliability(S: list, T: list) -> float:
     n = len(S)
     final_res = 0
     
