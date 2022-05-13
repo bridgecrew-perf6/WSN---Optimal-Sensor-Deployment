@@ -1,4 +1,0 @@
-Redraw the image
-write 4 algos in latex
-add certificate for hod
-code the algos
