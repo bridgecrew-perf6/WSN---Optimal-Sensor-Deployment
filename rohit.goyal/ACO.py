@@ -1,13 +1,10 @@
 import numpy as np
 import os
-from dotenv import load_dotenv
 import TourConstruction
 import LocalSearch
 
-load_dotenv()
-
-_lambda = os.load_dotenv('LAMBDA')
-r_c = os.load_dotenv('NODE_RANGE')
+_lambda = 0.02
+r_c = 50
 
 Reliability = TourConstruction.Reliability
 
