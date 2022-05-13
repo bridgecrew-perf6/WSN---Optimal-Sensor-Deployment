@@ -12,9 +12,11 @@ def f(Y: list, T: list) -> int:
     dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
     cnt = 0
 
+    # print('Y:', Y, 'T:', T)
+
     for node in Y:
         for target in T:
-            if dist(node, target) >= 50:
+            if dist(node, target) >= r_c:
                 cnt += 1
 
     return 1 if cnt >= 0 else 0
@@ -38,3 +40,11 @@ def Reliability(S: list, T: list) -> float:
         final_res += res
 
     return final_res
+
+def Reliability_Super(S: list, T:list) -> float:
+    relia = 1
+    mul = 1
+    for k in range(len(S)):
+        mul *= abs(1 - Reliability(S[k], T))
+    relia -= mul
+    return relia

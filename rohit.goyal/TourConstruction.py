@@ -145,12 +145,12 @@ def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list)
 
     return Sret
 
-D = [(14, 52), (98, 1), (93, 3), (62, 84), (73, 3), (53, 22), (46, 71), (79, 56), (73, 19), (11, 79)]
-T = [(58, 43), (19, 97), (84, 37), (36, 32), (69, 22)]
-d_o =  (62, 84)
-tau_mat = defaultdict(lambda : defaultdict(lambda : 0))
-for d in D:
-    for t in D:
-        tau_mat[d][t] = 0.1
+# D = [(14, 52), (98, 1), (93, 3), (62, 84), (73, 3), (53, 22), (46, 71), (79, 56), (73, 19), (11, 79)]
+# T = [(58, 43), (19, 97), (84, 37), (36, 32), (69, 22)]
+# d_o =  (62, 84)
+# tau_mat = defaultdict(lambda : defaultdict(lambda : 0))
+# for d in D:
+#     for t in D:
+#         tau_mat[d][t] = 0.1
 
-print(Tour_Construction(D, T, d_o, 0.99, tau_mat))
+# print(Tour_Construction(D, T, d_o, 0.99, tau_mat))
