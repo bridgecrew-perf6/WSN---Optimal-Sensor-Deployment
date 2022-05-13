@@ -2,3 +2,4 @@ __pycache__
 test.py
 'rohit.goyal'/todo.txt
 'rohit.goyal'/__pycache__
+.gitignore
