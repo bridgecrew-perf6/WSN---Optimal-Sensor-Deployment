@@ -1,4 +1,3 @@
-from cmath import tau
 import numpy as np
 from collections import defaultdict
 from reliability import Reliability
