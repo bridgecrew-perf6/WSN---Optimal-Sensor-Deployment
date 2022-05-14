@@ -1,44 +1,54 @@
+from cmath import inf
 import numpy as np
-import os
-import TourConstruction
-import LocalSearch
+from TourConstruction import Tour_Construction
+from LocalSearch import LocalSearch
+from cost import Cost
+from reliability import Reliability
 
-_lambda = 0.02
-r_c = 50
+tau_mat = []
 
-Reliability = TourConstruction.Reliability
+def Update_Phermones(S: list, best_ants: list) -> None:
+	pass
 
-def AntColonyOptimization(D, T, d_o, R_min):
+def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: float,
+				N_UB: int, r_s: int, r_c: int, m: int, rho, it_max: int, it_c: int) -> tuple:
 	
-	S = []
-	R_S = 0
-	k = 0
-	D_minus = D.copy()
-	
-	while R_S < R_min:
-		k = k+1
-		S_k = []
-		T_cov = []
+	'''
+	D: list of deployable points
+	T: list of target points
+	d_o: sink node
+	R_min: minimum reliability required
+	_lambda: probability fraction of node faliure
+	N_UB: upper bound of a node coverage (how many sensors should cover a single target point)
+	r_s:
+	r_c: range od sensor node
+	m: number of ants
+	rho: phermone evaporation rate
+	it_max: maximum iterations
+	it_c: maximum iterations with same cost value
+	'''
 
-		while TourConstruction.equal(T_cov, T):
-			
-			dist = lambda a, b: np.sqrt(np.square(a[0] - b[0]) + np.square(a[1] - b[1]))
-			N_next = []
-			
-			if len(S_k) == 0:
-				for d in D_minus:
-					if dist(d, d_o) < r_c:
-						N_next.append(d)
-			
-			else:
-				for dd in S_k:
-					for d in D_minus:
-						if dist(d, dd) < r_c and d not in S_k:
-							N_next.append(d)
+	it = 0
+	C_bs = inf
+	S_bs = []
+	tau_o = 1
 
-			
+	while it < it_max and it_c > 0:
+		
+		it += 1
+		C_ib = inf
+		S_ib
+		best_ants = []
 
-		R_S = Reliability(S)
+		for a in range(m):
+			S_a = Tour_Construction(D, T, d_o, R_min, tau_mat)
+			C_Sa = Cost(S_a, T, 1.2, 3, r_c)
+			if C_Sa < C_ib:
+				C_ib, S_ib = C_Sa, S_a.copy()
+				best_ants.clear()
+				best_ants.append(a)
+			elif C_Sa == C_ib:
+				best_ants.append(a)
+		
+		Update_Phermones(S_ib, best_ants)
 
-
-	return S, R_S
