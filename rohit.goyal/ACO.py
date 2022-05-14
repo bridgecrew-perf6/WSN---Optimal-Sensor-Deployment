@@ -1,22 +1,32 @@
 from cmath import inf
+from collections import defaultdict
 import numpy as np
 from TourConstruction import Tour_Construction
 from LocalSearch import LocalSearch
 from cost import Cost
-from reliability import Reliability
+from reliability import Reliability_Super
 
-tau_mat = []
+tau_mat = defaultdict(lambda : defaultdict(lambda : 1))
 
 def Update_Phermones(D: list, S: list, rho: float, C_ib: float) -> None:
-	S = set(S)
-	for i in range(len(D)):
-		for j in range(len(D)):
-			tau_mat[i][j] = (1 - rho) * tau_mat[i][j]
-			if D[j] in S:
-				tau_mat[i][j] += 1 / C_ib
+
+	global tau_mat
+
+	Good_nodes = set()
+	for s in S:
+		for node in s:
+			Good_nodes.add(node)
+	for node1 in D:
+		for node2 in D:
+			tau_mat[node1][node2] = (1 - rho) * tau_mat[node1][node2]
+			if node2 in Good_nodes:
+				tau_mat[node1][node2] += 1 / C_ib
 
 
 def Fix_Phermones_MMAS(N: int, rho: float, C_bs: float, b: float) -> None:
+
+	global tau_mat
+
 	tau_max = 1 / (rho * C_bs)
 	tau_min = tau_max / b
 	for i in range(N):
@@ -27,7 +37,8 @@ def Fix_Phermones_MMAS(N: int, rho: float, C_bs: float, b: float) -> None:
 				tau_mat[i][j] = tau_min
 
 def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: float,
-				N_UB: int, r_s: int, r_c: int, m: int, rho: float, it_max: int, it_c: int) -> tuple:
+				N_UB: int, r_s: int, r_c: int, m: int, rho: float, it_max: int,
+				it_c: int, b: float = 10, omega1: float = 1.2, omega2: float = 3) -> tuple:
 	
 	'''
 	D: list of deployable points
@@ -45,10 +56,14 @@ def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: f
 	b: min phermone value parameter
 	'''
 
+	global tau_mat
+
 	it = 0
 	C_bs = inf
 	S_bs = []
-	tau_mat = [[1 for i in range(len(D))] for j in range(len(D))]
+	for node1 in D:
+		for node2 in D:
+			tau_mat[node1][node2] = 1
 	it_cc = it_c
 
 	while it < it_max and it_cc > 0:
@@ -59,8 +74,10 @@ def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: f
 		best_ants = []
 
 		for a in range(m):
-			S_a = Tour_Construction(D, T, d_o, R_min, tau_mat)
-			C_Sa = Cost(S_a, T, 1.2, 3, r_c)
+			S_a = Tour_Construction(D, T, d_o, R_min, tau_mat, r_c)
+			C_Sa = Cost(S_a, T, 1.2, 3, r_c, omega1, omega2)
+			R_Sa = Reliability_Super(S_a, T)
+			S_a, C_Sa = LocalSearch(S_a, T, C_Sa, R_Sa, R_min, d_o, r_c)
 			if C_Sa < C_ib:
 				C_ib, S_ib = C_Sa, S_a.copy()
 				best_ants.clear()
@@ -76,6 +93,8 @@ def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: f
 			it_cc = it_c
 		else:
 			it_cc -= 1
+
+		print(C_bs)
 
 		Fix_Phermones_MMAS(len(D), rho, C_bs, b)
 

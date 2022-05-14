@@ -2,12 +2,13 @@ import numpy as np
 from collections import defaultdict
 from reliability import Reliability
 
-r_c = 50
-alpha = 1
-beta = 1
-_lambda = 0.02
-
+alpha = 2
+beta = 3
 Target_under = defaultdict(lambda :[])
+
+def dist(a: tuple, b: tuple) -> float:
+    return np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
+
 
 def equal(T_cov: list, T: list) -> bool:
     for item in T:
@@ -15,19 +16,15 @@ def equal(T_cov: list, T: list) -> bool:
             return False
     return True
 
-def find_Target_under(D: list, T: list) -> None:
 
-    dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
-
+def find_Target_under(D: list, T: list, r_c: int) -> None:
     for d in D:
         for t in T:
             if dist(d, t) <= r_c:
                 Target_under[d].append(t)
 
 
-def find_N_ifull(S_k: list, node_points: list) -> list:
-    
-    dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
+def find_N_ifull(S_k: list, node_points: list, r_c: int) -> list:
 
     N_ifull = set()
     
@@ -64,11 +61,9 @@ def find_coverage_gain(N: list, T_cov: list) -> int:
     return ret
 
 
-def next_best_node(d_o: tuple, tau: list, N_i: list) -> tuple:
+def next_best_node(d_o: tuple, tau: list, N_i: list, r_c: int, alpha: float, beta: float) -> tuple:
     
     phermone_vals = defaultdict(lambda :0)
-    
-    dist = lambda a, b : np.sqrt(np.power(a[0]-b[0], 2) + np.power(a[1]-b[1], 2))
 
     deno_sum = 0
     for node in N_i:
@@ -91,7 +86,8 @@ def next_best_node(d_o: tuple, tau: list, N_i: list) -> tuple:
     return ret
 
 
-def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list) -> list:
+def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list,
+                r_c: int, alpha: float = 2, beta: float = 3) -> list:
     '''
         D: set of possible node positions (x, y)
         T: set of target points (x, y)
@@ -101,13 +97,14 @@ def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list)
         tau_mat: phermone value of each path
         r_c: communication range of each node
     '''
-    
+
     # initialization of variables
+
     S = []
     S_reliability = 0
     k = 0
     D_minus = D.copy()
-    find_Target_under(D, T)
+    find_Target_under(D, T, r_c)
     
     #finding a reliable connected cover
     while S_reliability < R_min:
@@ -118,7 +115,7 @@ def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list)
 
         # covering all target points
         while not equal(T_cov, T):
-            N_ifull = find_N_ifull(S_k, D_minus)
+            N_ifull = find_N_ifull(S_k, D_minus, r_c)
             N_ieff = find_N_ieff(N_ifull, T_cov)
             N_i = N_ieff if len(N_ieff) != 0 else N_ifull
             converage_gain_i = find_coverage_gain(N_i, T_cov)
@@ -126,7 +123,7 @@ def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list)
             for target in Target_under[d_o]:
                 if target not in T_cov:
                     T_cov.append(target)
-            d_o = next_best_node(d_o, tau_mat, N_i)
+            d_o = next_best_node(d_o, tau_mat, N_i, r_c, alpha, beta)
         
         # Updating the variables after covering all arget points
         S.append(S_k)
@@ -147,9 +144,9 @@ def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list)
 # D = [(14, 52), (98, 1), (93, 3), (62, 84), (73, 3), (53, 22), (46, 71), (79, 56), (73, 19), (11, 79)]
 # T = [(58, 43), (19, 97), (84, 37), (36, 32), (69, 22)]
 # d_o =  (62, 84)
-# tau_mat = defaultdict(lambda : defaultdict(lambda : 0))
-# for d in D:
-#     for t in D:
-#         tau_mat[d][t] = 0.1
+# tau_mat = defaultdict(lambda : defaultdict(lambda : 1))
+# for a in D:
+#     for b in D:
+#         tau_mat[a][b] = 1
 
-# print(Tour_Construction(D, T, d_o, 0.99, tau_mat))
+# print(Tour_Construction(D, T, d_o, 0.99, tau_mat, 50))
