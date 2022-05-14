@@ -37,7 +37,7 @@ def Fix_Phermones_MMAS(N: int, rho: float, C_bs: float, b: float) -> None:
 				tau_mat[i][j] = tau_min
 
 def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: float,
-				N_UB: int, r_s: int, r_c: int, m: int, rho: float, it_max: int,
+				N_UB: int, r_c: int, m: int, rho: float, it_max: int,
 				it_c: int, b: float = 10, omega1: float = 1.2, omega2: float = 3) -> tuple:
 	
 	'''
@@ -47,7 +47,6 @@ def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: f
 	R_min: minimum reliability required
 	_lambda: probability fraction of node faliure
 	N_UB: upper bound of a node coverage (how many sensors should cover a single target point)
-	r_s:
 	r_c: range od sensor node
 	m: number of ants
 	rho: phermone evaporation rate
