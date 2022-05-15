@@ -7,7 +7,7 @@ n_cmd = len(sys.argv)
 
 if n_cmd < 3 or n_cmd > 4:
     print('Missing command line arguments')
-    print('python ./DT_generator.py <num_deployable_points> <num_target_points> [optinal <max_grid_position>]')
+    print('python ./DT_generator.py <num_deployable_points> <num_target_points>')
 
 else:
     try:
