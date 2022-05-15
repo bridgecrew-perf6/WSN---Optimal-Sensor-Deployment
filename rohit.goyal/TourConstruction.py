@@ -1,3 +1,4 @@
+from cmath import inf
 import numpy as np
 from collections import defaultdict
 from reliability import Reliability
@@ -85,7 +86,6 @@ def next_best_node(d_o: tuple, tau: list, N_i: list, r_c: int, alpha: float, bet
 
     return ret
 
-
 def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list,
                 r_c: int, alpha: float = 2, beta: float = 3) -> list:
     '''
@@ -108,18 +108,20 @@ def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list,
     
     #finding a reliable connected cover
     while S_reliability < R_min:
-        
+        # print('xxxx')
         #initializaion variables for this iteration
         k += 1
-        S_k, T_cov = [[] for count in range(2)]
+        S_k, T_cov = [[] for i in range(2)]
 
         # covering all target points
         while not equal(T_cov, T):
+            # print('mmmm')
             N_ifull = find_N_ifull(S_k, D_minus, r_c)
             N_ieff = find_N_ieff(N_ifull, T_cov)
             N_i = N_ieff if len(N_ieff) != 0 else N_ifull
             converage_gain_i = find_coverage_gain(N_i, T_cov)
             S_k.append(d_o)
+            # print(N_i)
             for target in Target_under[d_o]:
                 if target not in T_cov:
                     T_cov.append(target)
@@ -140,13 +142,3 @@ def Tour_Construction(D: list, T: list, d_o: tuple, R_min: float, tau_mat: list,
         Sret.append(list(s))
 
     return Sret
-
-# D = [(14, 52), (98, 1), (93, 3), (62, 84), (73, 3), (53, 22), (46, 71), (79, 56), (73, 19), (11, 79)]
-# T = [(58, 43), (19, 97), (84, 37), (36, 32), (69, 22)]
-# d_o =  (62, 84)
-# tau_mat = defaultdict(lambda : defaultdict(lambda : 1))
-# for a in D:
-#     for b in D:
-#         tau_mat[a][b] = 1
-
-# print(Tour_Construction(D, T, d_o, 0.99, tau_mat, 50))

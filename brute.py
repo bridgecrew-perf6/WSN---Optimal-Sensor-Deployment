@@ -1,14 +1,21 @@
 import numpy as np
 from reliability import Reliability
 
-D = input("Enter all the deployable points: ")
-T = input("Enter all the target points: ")
-d_o = input("Position of HeadQuarter/Sink Node: ")
-_lambda = float(input('Probablity fraction of Node faliure(0, 1): '))
-R_min = float(input('Minimum Reliability Required: '))
-N_ub = int(input('Minimum number of node to cover a target: '))
-rs = int(input('Range of '))
-rc = int(input('Range of Sensor Node: '))
+# D = input("Enter all the deployable points: ")
+# T = input("Enter all the target points: ")
+# d_o = input("Position of HeadQuarter/Sink Node: ")
+# _lambda = float(input('Probablity fraction of Node faliure(0, 1): '))
+# R_min = float(input('Minimum Reliability Required: '))
+# N_ub = int(input('Minimum number of node to cover a target: '))
+# rs = int(input('Range of '))
+# rc = int(input('Range of Sensor Node: '))
+
+D = [(30, 20), (19, 11), (83, 18), (4, 33), (14, 40), (59, 46), (77, 21), (76, 42), (46, 5), (27, 90), (40, 61), (23, 8), (69, 9), (31, 41), (71, 29), (93, 11), (40, 67), (52, 31), (17, 52), (46, 16), (78, 66), (88, 70), (22, 89), (70, 18), (56, 96), (16, 46), (43, 85), (65, 64), (79, 97), (94, 62), (43, 30), (89, 57), (17, 83), (16, 91), (44, 57), (28, 2), (40, 96), (12, 16), (74, 41), (22, 7), (48, 22), (37, 36), (20, 24), (88, 16), (18,  75), (83, 76), (43, 58), (10, 31), (91, 96), (21, 35), (12, 82), (80, 19), (15, 93), (79, 21), (21, 13), (72, 57), (65, 45), (22, 24), (2, 37), (78, 9)]
+T = [(8, 72), (52, 57), (77, 63), (56, 85), (11, 95), (11, 6), (69, 15), (84, 88), (75, 45), (34, 41), (94, 21), (42, 71), (3, 2), (43, 36), (34, 47), (100, 63), (55, 52), (34, 40), (55, 92), (20, 25)]
+d_o = (19, 11)
+_lambda = 0.02
+R_min = 0.99
+rc = 50
 
 def fix_point(P: str) -> tuple:
 	P = P.rstrip(')').lstrip('(')
@@ -44,9 +51,9 @@ def find_coverage_gains(N: list, T: list, T_cov: list) -> list:
 		ret.append(cnt)
 	return ret
 
-D = fix_array(D)
-T = fix_array(T)
-d_o = fix_point(d_o)
+# D = fix_array(D)
+# T = fix_array(T)
+# d_o = fix_point(d_o)
 
 S = []
 R = 0

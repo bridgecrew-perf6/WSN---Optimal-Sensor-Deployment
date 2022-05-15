@@ -5,6 +5,8 @@ from TourConstruction import Tour_Construction
 from LocalSearch import LocalSearch
 from cost import Cost
 from reliability import Reliability_Super
+import matplotlib.pyplot as plt
+from plot_utility import plot_util
 
 tau_mat = defaultdict(lambda : defaultdict(lambda : 1))
 
@@ -57,6 +59,8 @@ def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: f
 
 	global tau_mat
 
+	cost_array = []
+
 	it = 0
 	C_bs = inf
 	S_bs = []
@@ -64,6 +68,10 @@ def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: f
 		for node2 in D:
 			tau_mat[node1][node2] = 1
 	it_cc = it_c
+
+	graph_done_tc = False
+	tc_graph = []
+	ls_graph = []
 
 	while it < it_max and it_cc > 0:
 		
@@ -74,9 +82,13 @@ def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: f
 
 		for a in range(m):
 			S_a = Tour_Construction(D, T, d_o, R_min, tau_mat, r_c)
-			C_Sa = Cost(S_a, T, 1.2, 3, r_c, omega1, omega2)
+			if not graph_done_tc:
+				graph_done_tc = True
+				tc_graph = S_a.copy()
+			C_Sa = Cost(S_a, T, omega1, omega2, r_c)
 			R_Sa = Reliability_Super(S_a, T)
 			S_a, C_Sa = LocalSearch(S_a, T, C_Sa, R_Sa, R_min, d_o, r_c)
+			ls_graph = S_a.copy()
 			if C_Sa < C_ib:
 				C_ib, S_ib = C_Sa, S_a.copy()
 				best_ants.clear()
@@ -94,7 +106,19 @@ def AntColonyOptimization(D: list, T: list, d_o: tuple, R_min: float, _lambda: f
 			it_cc -= 1
 
 		print(C_bs)
+		cost_array.append(C_bs)
 
 		Fix_Phermones_MMAS(len(D), rho, C_bs, b)
 
+	plot_util(D, T, d_o)
+	# print(tc_graph, ls_graph)
+	plot_util(D, T, d_o, tc_graph)
+	plot_util(D, T, d_o, ls_graph)
+
+	plt.figure(figsize=(6,6))
+	plt.plot(cost_array)
+	plt.xlabel('Inerations')
+	plt.ylabel('Cost')
+	plt.title('Cost vs Iteration Graph')
+	plt.show()
 	return S_bs, C_bs

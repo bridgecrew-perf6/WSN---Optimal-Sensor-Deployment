@@ -37,7 +37,7 @@ def Reliability(S: list, T: list) -> float:
         # print("X = ", X, "Y = ", Y)
         res = prob(X, Y)
         res *= f(Y, T)
-        final_res += res / 4.5
+        final_res += res
 
     return final_res
 
